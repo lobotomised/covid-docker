@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+    mysql:
+        image: mariadb:10
+        container_name: covid-tracker-mariadb
+        restart: unless-stopped
+        ports:
+            - "33080:3306"
+        environment:
+            MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
+        volumes:
+            - "mariadb-data:/var/lib/mysql"
+        networks:
+            - app-network
+
+    php:
+        build:
+            context: .
+            dockerfile: ./docker/php/Dockerfile
+        container_name: covid-tracker-php
+        restart: unless-stopped
+        env_file:
+            - ./.env
+        volumes:
+            - covid-code:/code
+        networks:
+            - app-network
+            - web-network
+        depends_on:
+            - mysql
+            
+    nginx:
+        build:
+            context: .
+            dockerfile: ./docker/nginx/Dockerfile
+        container_name: covid-tracker-nginx
+        restart: unless-stopped
+        environment:
+            NGINX_HOST: ${NGINX_HOST}
+        ports:
+            - "127.0.0.1:${NGINX_HTTP}:80"
+        volumes:
+            - covid-code:/code
+        networks:
+            - web-network
+        depends_on:
+            - php
+
+    cron:
+        build:
+            context: .
+            dockerfile: ./docker/php-cron/Dockerfile
+        container_name: covid-tracker-cron
+        restart: unless-stopped
+        env_file:
+            - ./.env
+        volumes:
+            - covid-code:/code
+        networks:
+          - app-network
+        depends_on:
+            - php
+            - mysql
+
+networks:
+    web-network:
+    app-network:
+
+volumes:
+    mariadb-data:
+    covid-code:
