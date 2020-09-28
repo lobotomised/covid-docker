@@ -19,7 +19,7 @@ COPY /docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
 WORKDIR /code
 
 RUN git clone https://github.com/lobotomised/covid . \
-    && git git rev-parse HEAD > commit_sha
+    && git git rev-parse HEAD > commit_sha \
     && composer install --prefer-dist --no-dev --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader \
     && composer clear-cache --no-ansi \
     && npm install \
