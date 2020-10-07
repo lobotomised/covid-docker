@@ -1,9 +1,9 @@
 FROM php:7.4-fpm-alpine
 
 RUN apk add --no-cache \
-    curl
-    icu-dev
-    gmp-dev
+    curl \
+    icu-dev \
+    gmp-dev \
     mariadb-client \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install gmp
