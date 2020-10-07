@@ -1,9 +1,10 @@
 FROM php:7.4-fpm-alpine
 
 RUN apk add --no-cache \
-    # Install OS level dependencies
-    curl icu-dev mariadb-client \
-    # Install PHP dependencies
+    curl
+    icu-dev
+    gmp-dev
+    mariadb-client \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install gmp
 
