@@ -1,11 +1,7 @@
-FROM php:8.0-fpm-alpine
+FROM lobotomised/docker-php-base:latest
 
 RUN apk add --update \
-    git \
-    icu-dev \
     gmp-dev \
-    mariadb-client \
-    npm \
     && rm -rf /var/cache/apk/*
 
 RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
@@ -14,8 +10,6 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
     && docker-php-ext-install gmp
 
 COPY /docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
-
-COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /code
 

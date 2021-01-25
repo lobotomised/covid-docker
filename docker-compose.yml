@@ -64,6 +64,21 @@ services:
             - php
             - mysql
 
+    queue:
+        build:
+            context: .
+            dockerfile: ./docker/queue/Dockerfile
+        restart: always
+        volumes:
+            - covid-code:/code
+        working_dir: /code
+        env_file:
+            - ./.env
+        networks:
+            - app-network
+        depends_on:
+            - php
+            - mysql
 networks:
     web-network:
     app-network:
